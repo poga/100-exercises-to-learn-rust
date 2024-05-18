@@ -58,8 +58,24 @@ impl TicketStore {
     }
 }
 
+impl std::ops::Index<&TicketId> for TicketStore {
+    type Output = Ticket;
+
+    fn index(&self, id: &TicketId) -> &Self::Output {
+        self.get(*id).unwrap()
+    }
+}
+
+impl std::ops::Index<TicketId> for TicketStore {
+    type Output = Ticket;
+
+    fn index(&self, id: TicketId) -> &Self::Output {
+        self.get(id).unwrap()
+    }
+}
+
 #[cfg(test)]
-mod tests {
+pub mod tests {
     use crate::{Status, TicketDraft, TicketStore};
     use ticket_fields::test_helpers::{ticket_description, ticket_title};
 

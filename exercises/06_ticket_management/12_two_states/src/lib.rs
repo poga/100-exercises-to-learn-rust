@@ -43,9 +43,26 @@ impl TicketStore {
             tickets: Vec::new(),
         }
     }
+    
+    fn next_id(&self) -> TicketId {
+        let id = self.tickets.len() as u64;
+        TicketId(id)
+    }
+    
+    pub fn get(&self, id: TicketId) -> Option<&Ticket> {
+        self.tickets.iter().find(|ticket| ticket.id == id)
+    }
 
-    pub fn add_ticket(&mut self, ticket: Ticket) {
-        self.tickets.push(ticket);
+    pub fn add_ticket(&mut self, draft: TicketDraft) -> TicketId {
+        let id = self.next_id();
+        self.tickets.push(Ticket {
+            id,
+            title: draft.title,
+            description: draft.description,
+            status: Status::ToDo,
+        });
+        
+        id  
     }
 }
 
