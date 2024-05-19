@@ -1,8 +1,8 @@
+use std::sync::{Arc, Mutex};
 // TODO: Fill in the missing methods for `TicketStore`.
 //  Notice how we no longer need a separate update command: `Get` now returns a handle to the ticket
 //  which allows the caller to both modify and read the ticket.
-use std::sync::mpsc::{sync_channel, Receiver, SyncSender, TrySendError};
-use std::sync::{Arc, Mutex};
+use std::sync::mpsc::{Receiver, sync_channel, SyncSender};
 
 use crate::data::{Ticket, TicketDraft};
 use crate::store::{TicketId, TicketStore};
