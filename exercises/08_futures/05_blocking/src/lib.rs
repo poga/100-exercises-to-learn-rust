@@ -3,6 +3,7 @@
 //  deadlock between the caller and the server.
 //  Use `spawn_blocking` inside `echo` to resolve the issue.
 use std::io::{Read, Write};
+
 use tokio::net::TcpListener;
 
 pub async fn echo(listener: TcpListener) -> Result<(), anyhow::Error> {
@@ -10,19 +11,23 @@ pub async fn echo(listener: TcpListener) -> Result<(), anyhow::Error> {
         let (socket, _) = listener.accept().await?;
         let mut socket = socket.into_std()?;
         socket.set_nonblocking(false)?;
-        let mut buffer = Vec::new();
-        socket.read_to_end(&mut buffer)?;
-        socket.write_all(&buffer)?;
+        let handle = tokio::task::spawn_blocking(move || {
+            let mut buffer = Vec::new();
+            socket.read_to_end(&mut buffer).unwrap();
+            socket.write_all(&buffer).unwrap();
+        });
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use std::net::SocketAddr;
     use std::panic;
+
     use tokio::io::{AsyncReadExt, AsyncWriteExt};
     use tokio::task::JoinSet;
+
+    use super::*;
 
     async fn bind_random() -> (TcpListener, SocketAddr) {
         let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();

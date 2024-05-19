@@ -1,6 +1,7 @@
 // TODO: fix the `assert_eq` at the end of the tests.
 //  Do you understand why that's the resulting output?
 use std::time::Duration;
+
 use tokio::io::AsyncReadExt;
 use tokio::net::TcpListener;
 
@@ -18,8 +19,9 @@ pub async fn run(listener: TcpListener, n_messages: usize, timeout: Duration) ->
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use tokio::io::AsyncWriteExt;
+
+    use super::*;
 
     #[tokio::test]
     async fn ping() {
@@ -46,6 +48,6 @@ mod tests {
 
         let buffered = handle.await.unwrap();
         let buffered = std::str::from_utf8(&buffered).unwrap();
-        assert_eq!(buffered, "");
+        assert_eq!(buffered, "hefrthta");
     }
 }
